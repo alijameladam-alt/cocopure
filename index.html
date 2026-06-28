@@ -518,6 +518,42 @@
   .notes__body li { margin: 0 0 6px; }
   .notes__empty { color: var(--grey-500); font-style: italic; }
 
+  /* Text page (kind: "page"): prose-led, no video frame */
+  .page-body {
+    max-width: var(--maxread);
+    margin-top: 8px;
+    font-size: 1.05rem;
+    color: var(--grey-800);
+  }
+  .page-body p { margin: 0 0 16px; }
+  .page-body ul { margin: 0 0 16px; padding-left: 20px; }
+  .page-body li { margin: 0 0 8px; }
+
+  /* Call-to-action button (e.g. download the resource pack) */
+  .page-cta { margin: 28px 0 8px; max-width: var(--maxread); }
+  .lesson-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--white);
+    padding: 13px 22px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+  }
+  .lesson-button:hover { background: var(--white); color: var(--ink); }
+  .lesson-button .arrow { font-size: 0.95em; }
+
+  /* Sidebar marker for a page (a square, vs the round lesson tick) */
+  .lesson-tick.is-page {
+    border-radius: 1px;
+    border-color: var(--grey-400);
+  }
+  .lesson-link.is-active .lesson-tick.is-page { border-color: var(--white); }
+
   /* Prev / next */
   .lesson-nav {
     display: flex;
@@ -699,8 +735,11 @@
         flatLessons.push({
           id: lesson.id,
           title: lesson.title,
+          heading: lesson.heading || lesson.title,
+          kind: lesson.kind || "lesson",
           embed: lesson.embed || "",
           studioOnly: !!lesson.studioOnly,
+          button: lesson.button || null,
           notes: lesson.notes || "",
           moduleId: mod.id,
           moduleTitle: mod.title,
@@ -718,15 +757,21 @@
     return null;
   }
 
-  /* ---- Progress maths ---- */
+  /* ---- Progress maths (text pages don't count toward completion) ---- */
   function isDone(id) { return !!progress[id]; }
+  function isPage(lesson) { return (lesson.kind || "lesson") === "page"; }
+  function countableIds(lessons) {
+    return lessons.filter(function (l) { return !isPage(l); })
+                  .map(function (l) { return l.id; });
+  }
   function doneCount(ids) {
     return ids.reduce(function (n, id) { return n + (isDone(id) ? 1 : 0); }, 0);
   }
   function overallPct() {
-    if (!flatLessons.length) return 0;
-    var done = flatLessons.filter(function (l) { return isDone(l.id); }).length;
-    return Math.round((done / flatLessons.length) * 100);
+    var countable = flatLessons.filter(function (l) { return !isPage(l); });
+    if (!countable.length) return 0;
+    var done = countable.filter(function (l) { return isDone(l.id); }).length;
+    return Math.round((done / countable.length) * 100);
   }
 
   /* ---- Small helpers ---- */
@@ -759,6 +804,19 @@
     });
   }
 
+  /* Append an optional call-to-action button (opens in a new tab) */
+  function appendButton(lesson) {
+    if (!lesson.button || !lesson.button.href) return;
+    var wrap = el("div", "page-cta");
+    var a = el("a", "lesson-button", lesson.button.label || "Open link");
+    a.href = lesson.button.href;
+    a.target = "_blank";
+    a.rel = "noopener noreferrer";
+    a.appendChild(el("span", "arrow", "↗"));
+    wrap.appendChild(a);
+    view.appendChild(wrap);
+  }
+
   /* =======================================================================
      SIDEBAR RENDER
      ======================================================================= */
@@ -770,7 +828,7 @@
 
     COURSE.modules.forEach(function (mod, mi) {
       var num = String(mi + 1).padStart(2, "0");
-      var ids = mod.lessons.map(function (l) { return l.id; });
+      var ids = countableIds(mod.lessons);
 
       var moduleEl = el("section", "module");
       moduleEl.dataset.moduleId = mod.id;
@@ -781,8 +839,9 @@
       head.setAttribute("aria-expanded", collapsed[mod.id] ? "false" : "true");
       head.appendChild(el("span", "module__num", num));
       head.appendChild(el("span", "module__title", mod.title));
-      head.appendChild(el("span", "module__count",
-        doneCount(ids) + "/" + ids.length));
+      // only show an x/y count when the module has completable lessons
+      var countText = ids.length ? doneCount(ids) + "/" + ids.length : "";
+      head.appendChild(el("span", "module__count", countText));
       head.appendChild(el("span", "module__chev", "▼"));
       head.addEventListener("click", function () {
         collapsed[mod.id] = !collapsed[mod.id];
@@ -800,7 +859,13 @@
         btn.dataset.search = (lesson.title + " " + mod.title).toLowerCase();
         if (lesson.id === currentId) btn.classList.add("is-active");
 
-        var tick = el("span", "lesson-tick" + (isDone(lesson.id) ? " is-done" : ""));
+        var tick;
+        if (isPage(lesson)) {
+          tick = el("span", "lesson-tick is-page");
+          tick.title = "Read me";
+        } else {
+          tick = el("span", "lesson-tick" + (isDone(lesson.id) ? " is-done" : ""));
+        }
         btn.appendChild(tick);
         btn.appendChild(el("span", "lesson-label", lesson.title));
         if (lesson.studioOnly) {
@@ -829,13 +894,14 @@
 
     // refresh per-module counts and ticks without full re-render
     COURSE.modules.forEach(function (mod) {
-      var ids = mod.lessons.map(function (l) { return l.id; });
+      var ids = countableIds(mod.lessons);
       var sec = moduleListEl.querySelector('[data-module-id="' + mod.id + '"]');
       if (!sec) return;
       var count = sec.querySelector(".module__count");
-      if (count) count.textContent = doneCount(ids) + "/" + ids.length;
+      if (count) count.textContent = ids.length ? doneCount(ids) + "/" + ids.length : "";
     });
     flatLessons.forEach(function (l) {
+      if (isPage(l)) return;
       var btn = moduleListEl.querySelector('.lesson-link[data-lesson-id="' + l.id + '"]');
       if (!btn) return;
       var tick = btn.querySelector(".lesson-tick");
@@ -884,45 +950,56 @@
     }
     view.appendChild(eyebrowRow);
 
-    // Heading
-    view.appendChild(el("h2", "lesson-heading", lesson.title));
+    // Heading (a page can override its menu label with a longer heading)
+    view.appendChild(el("h2", "lesson-heading", lesson.heading || lesson.title));
 
-    // Player
-    var player = el("div", "player");
-    if (lesson.embed && lesson.embed.trim()) {
-      player.innerHTML = lesson.embed;
+    if (isPage(lesson)) {
+      // ---- Text page: prose-led, no player, no completion toggle ----
+      var pageBody = el("div", "page-body");
+      renderNotes(pageBody, lesson.notes);
+      view.appendChild(pageBody);
+      appendButton(lesson);
     } else {
-      var empty = el("div", "player__empty");
-      empty.appendChild(el("strong", null, "No video linked yet"));
-      var p = el("p");
-      p.innerHTML = "Add an embed code for lesson <code>" + lesson.id +
-        "</code> in the <code>embed</code> field of the COURSE data block.";
-      empty.appendChild(p);
-      player.appendChild(empty);
+      // ---- Standard lesson: player + complete toggle + notes ----
+      var player = el("div", "player");
+      if (lesson.embed && lesson.embed.trim()) {
+        player.innerHTML = lesson.embed;
+      } else {
+        var empty = el("div", "player__empty");
+        empty.appendChild(el("strong", null, "No video linked yet"));
+        var p = el("p");
+        p.innerHTML = "Add an embed code for lesson <code>" + lesson.id +
+          "</code> in the <code>embed</code> field of the COURSE data block.";
+        empty.appendChild(p);
+        player.appendChild(empty);
+      }
+      view.appendChild(player);
+
+      // Controls: mark complete
+      var controls = el("div", "lesson-controls");
+      var btn = el("button", "btn-complete" + (isDone(lesson.id) ? " is-done" : ""));
+      btn.setAttribute("aria-pressed", isDone(lesson.id) ? "true" : "false");
+      var box = el("span", "box");
+      var lbl = el("span", "lbl", isDone(lesson.id) ? "Completed" : "Mark complete");
+      btn.appendChild(box);
+      btn.appendChild(lbl);
+      btn.addEventListener("click", function () {
+        toggleComplete(lesson.id, btn, lbl);
+      });
+      controls.appendChild(btn);
+      view.appendChild(controls);
+
+      // Notes
+      var notes = el("section", "notes");
+      notes.appendChild(el("h2", null, "Lesson notes"));
+      var body = el("div", "notes__body");
+      renderNotes(body, lesson.notes);
+      notes.appendChild(body);
+      view.appendChild(notes);
+
+      // Optional button on a standard lesson too
+      appendButton(lesson);
     }
-    view.appendChild(player);
-
-    // Controls: mark complete
-    var controls = el("div", "lesson-controls");
-    var btn = el("button", "btn-complete" + (isDone(lesson.id) ? " is-done" : ""));
-    btn.setAttribute("aria-pressed", isDone(lesson.id) ? "true" : "false");
-    var box = el("span", "box");
-    var lbl = el("span", "lbl", isDone(lesson.id) ? "Completed" : "Mark complete");
-    btn.appendChild(box);
-    btn.appendChild(lbl);
-    btn.addEventListener("click", function () {
-      toggleComplete(lesson.id, btn, lbl);
-    });
-    controls.appendChild(btn);
-    view.appendChild(controls);
-
-    // Notes
-    var notes = el("section", "notes");
-    notes.appendChild(el("h2", null, "Lesson notes"));
-    var body = el("div", "notes__body");
-    renderNotes(body, lesson.notes);
-    notes.appendChild(body);
-    view.appendChild(notes);
 
     // Prev / next
     var nav = el("nav", "lesson-nav");
@@ -1065,10 +1142,19 @@
        Copy one whole { ... } lesson block, paste it into the module you want,
        then set:
          id          short unique tag, no spaces
-         title       what shows in the menu and heading
+         title       what shows in the menu (and the heading, unless heading is set)
          embed       paste the full embed code from the host, inside the backticks
          studioOnly  true if it needs Resolve Studio (shows the badge), else false
          notes       optional text under the video. \n = new line, "- " = bullet
+
+     OPTIONAL LESSON FIELDS
+         kind        "page" makes a text page: no video frame, no completion
+                     tick, and it does not count toward progress. Omit for a
+                     normal video lesson.
+         heading     optional big heading for the page, if you want it to differ
+                     from the short menu title.
+         button      optional call-to-action, e.g.
+                     button: { label: "Download the resource pack", href: "https://..." }
 
      TO ADD A MODULE
        Copy a whole { id, title, lessons:[...] } module block. Numbers auto-generate.
@@ -1082,6 +1168,30 @@
     subtitle: "How we cut, grade and finish short-form video in DaVinci Resolve.",
 
     modules: [
+
+      /* ====================================================================
+         START HERE
+         A text page (kind: "page"): no video, no completion tick, and it
+         carries the resource-pack download button.
+         ==================================================================== */
+      {
+        id: "start-here",
+        title: "Start here",
+        lessons: [
+          {
+            id: "start-here-page",
+            title: "Welcome to the Fokal edit",
+            kind: "page",
+            embed: ``,
+            studioOnly: false,
+            button: {
+              label: "Download the resource pack",
+              href: "https://www.dropbox.com/scl/fo/ksm531za7roym6y5iij6m/AGQI4eki4ixCxdvplsdx01c?rlkey=9tx2xx19qfx97jboqtzuxvbu5&st=1bmfo64v&dl=0"
+            },
+            notes: "This is the full editing workflow at Fokal, start to finish. Work through it in order and you'll be able to take raw footage and turn it into a finished, graded, captioned video ready to post.\nTwo skills carry most of the work: cutting and colour grading. They come up the most and they're what make our videos look like ours, so spend the most time there.\nBefore you start:\n- Download the resource pack from the Start here page and unzip it\n- Save the Sounds folder somewhere on your computer or hard drive\n- Install the LUTs and Text Effects (the next lesson shows you how)\n- Check whether you're on DaVinci Resolve Studio or the free version. Most of this works on the free version. Anything that needs Studio is marked with a 🔵\nHow to use this course: open Resolve and edit alongside the videos, don't just watch. Pause, copy each step, and repeat it until it sticks. If a step needs a Studio feature you don't have, skip it and keep moving.\nLet's get into it."
+          }
+        ]
+      },
 
       /* ====================================================================
          1. INTRODUCTION AND SETUP
