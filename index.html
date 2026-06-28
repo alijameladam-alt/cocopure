@@ -565,14 +565,16 @@
     max-width: 960px;
   }
   .nav-btn {
-    background: none;
-    border: none;
-    padding: 6px 0;
+    background: var(--white);
+    border: 1px solid var(--grey-300);
+    border-radius: 2px;
+    padding: 14px 20px;
     text-align: left;
     max-width: 46%;
     color: var(--grey-700);
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
   }
-  .nav-btn:hover:not(:disabled) { color: var(--ink); }
+  .nav-btn:hover:not(:disabled) { color: var(--ink); border-color: var(--ink); }
   .nav-btn:disabled { opacity: 0.3; cursor: default; }
   .nav-btn .nav-dir {
     display: block;
@@ -582,11 +584,27 @@
     color: var(--grey-500);
     margin-bottom: 3px;
   }
-  .nav-btn.next { text-align: right; margin-left: auto; }
   .nav-btn .nav-ttl {
     font-family: 'Playfair Display', serif;
     font-size: 1rem;
   }
+  .nav-btn.prev .nav-ttl::before { content: "\2190  "; }
+
+  /* Next is the primary forward action: solid filled box so it clearly reads
+     as the thing to click. Hover inverts to white. Stays strict monochrome. */
+  .nav-btn.next {
+    text-align: right;
+    margin-left: auto;
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--white);
+  }
+  .nav-btn.next .nav-dir { color: var(--grey-400); }
+  .nav-btn.next .nav-ttl { color: var(--white); }
+  .nav-btn.next .nav-ttl::after { content: "  \2192"; }
+  .nav-btn.next:hover:not(:disabled) { background: var(--white); color: var(--ink); }
+  .nav-btn.next:hover:not(:disabled) .nav-dir { color: var(--grey-600); }
+  .nav-btn.next:hover:not(:disabled) .nav-ttl { color: var(--ink); }
 
   /* Drawer scrim (mobile) */
   .scrim {
