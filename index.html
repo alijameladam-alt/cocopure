@@ -13,7 +13,7 @@
 
 <style>
   /* =========================================================================
-     THE FOKAL EDIT — styles
+     THE FOKAL EDIT - styles
      Strict monochrome editorial. No colour, no shadows, no gradients, no glow.
      Palette is the only source of "tone": an ink/black + bone/white + grey ramp.
      ========================================================================= */
@@ -404,15 +404,26 @@
   @supports not (aspect-ratio: 16 / 9) {
     .player { height: 0; padding-bottom: 56.25%; }
   }
-  .player > iframe,
-  .player > video,
-  .player > embed,
-  .player > object {
+  /* Force ANY embedded media to fill the 16:9 frame, even when the host
+     wraps its iframe in its own responsive <div> (Loom, Wistia, etc.). */
+  .player iframe,
+  .player video,
+  .player embed,
+  .player object {
     position: absolute;
     inset: 0;
     width: 100% !important;
     height: 100% !important;
     border: 0;
+  }
+  /* A host's own wrapper div should just fill the frame, not impose its
+     own aspect padding on top of ours. */
+  .player > div {
+    position: absolute !important;
+    inset: 0 !important;
+    padding: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
   }
 
   .player__empty {
@@ -650,7 +661,7 @@
 
 <script>
 /* =========================================================================
-   THE FOKAL EDIT — app logic (vanilla JS, no framework, no build step)
+   THE FOKAL EDIT - app logic (vanilla JS, no framework, no build step)
    The COURSE data object lives at the very bottom of this script.
    To maintain the course you only ever edit COURSE.
    ========================================================================= */
@@ -1006,6 +1017,22 @@
      INIT
      ======================================================================= */
   function init() {
+    // Brand text is driven by COURSE so everything is maintained in one place.
+    if (COURSE.title) {
+      document.title = COURSE.title + (COURSE.eyebrow ? " · " + COURSE.eyebrow : "");
+      document.querySelectorAll(".brand-title").forEach(function (n) {
+        n.textContent = COURSE.title;
+      });
+    }
+    if (COURSE.eyebrow) {
+      var eb = document.querySelector(".brand-eyebrow");
+      if (eb) eb.textContent = COURSE.eyebrow;
+    }
+    if (COURSE.subtitle) {
+      var sub = document.querySelector(".brand-sub");
+      if (sub) sub.textContent = COURSE.subtitle;
+    }
+
     buildIndex();
     renderSidebar();
 
@@ -1017,260 +1044,271 @@
     if (startId) openLesson(startId);
   }
 
-  /* =======================================================================
-     =======================================================================
-     COURSE  —  THE ONLY THING YOU EDIT TO MAINTAIN THIS SITE
-     =======================================================================
-     =======================================================================
+  /* ============================================================================
+     THE FOKAL EDIT - course data
+     ----------------------------------------------------------------------------
+     This is the whole course in one object. The site is built and maintained by
+     editing this block only. Everything else (layout, player, progress) is
+     machinery and reads from here.
 
-     HOW TO ADD A LESSON
-       Copy one lesson block { ... } and paste it into the right module's
-       "lessons" array. Give it a unique "id" (short, no spaces).
+     SECTIONS (in order):
+       1. Introduction and setup
+       2. Editing
+       3. Sound and audio
+       4. Text and captions
+       5. Colour grading
+       6. Effects, animation and transitions
+       7. Export
+       8. Full edit examples
 
-     HOW TO ADD A MODULE
-       Copy one module block { id, title, lessons: [...] } into "modules".
-       Module numbers (01, 02 ...) generate automatically from order.
+     TO ADD A LESSON
+       Copy one whole { ... } lesson block, paste it into the module you want,
+       then set:
+         id          short unique tag, no spaces
+         title       what shows in the menu and heading
+         embed       paste the full embed code from the host, inside the backticks
+         studioOnly  true if it needs Resolve Studio (shows the badge), else false
+         notes       optional text under the video. \n = new line, "- " = bullet
 
-     HOW TO PASTE AN EMBED CODE
-       Paste the FULL embed code the host gives you (the whole <iframe ...>,
-       or a <div>/<script> Wistia/Loom block) BETWEEN THE BACKTICKS of the
-       "embed" field. Backticks let the quotes inside the embed survive.
-       Any host works (YouTube, Vimeo, Wistia, Loom, ...). The player forces
-       whatever you paste to fill the 16:9 frame. Leave it empty (``) until
-       the video exists and the lesson shows a tidy "no video linked yet" state.
+     TO ADD A MODULE
+       Copy a whole { id, title, lessons:[...] } module block. Numbers auto-generate.
 
-     LESSON SHAPE
-       {
-         id: "unique-tag",     // short, no spaces
-         title: "Shown in menu and heading",
-         embed: ``,            // paste the full embed code inside these backticks
-         studioOnly: false,    // true shows the blue Studio badge
-         notes: ""             // optional. \n = new line, "- " prefix = a bullet
-       }
-     ======================================================================= */
-  var COURSE = {
+     The first lesson loads when someone opens the course.
+     ============================================================================ */
+
+  const COURSE = {
+    eyebrow: "Fokal Studios",
+    title: "The Fokal Edit",
+    subtitle: "How we cut, grade and finish short-form video in DaVinci Resolve.",
+
     modules: [
 
+      /* ====================================================================
+         1. INTRODUCTION AND SETUP
+         ==================================================================== */
       {
-        id: "start-here",
-        title: "Start here",
+        id: "intro",
+        title: "Introduction and setup",
         lessons: [
           {
             id: "welcome",
-            title: "Welcome and what this covers",
+            title: "Welcome to the Fokal edit",
             embed: ``,
             studioOnly: false,
-            notes: "Welcome to The Fokal Edit. This is the exact DaVinci Resolve workflow we use at Fokal Studios, taught through short videos.\nWork through the modules in order. They build on each other.\n- Tick lessons off as you go. Your progress is saved on this device.\n- Lessons marked Studio need the paid version of DaVinci Resolve.\n- Search any lesson from the box on the left."
+            notes: "Placeholder. A short intro: what this course covers, the Fokal style, and how to use it. Film it later or delete this lesson."
           },
           {
-            id: "fokal-style",
-            title: "The Fokal style",
-            embed: ``,
+            id: "install-assets",
+            title: "Installing text effects, fonts and LUTs",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/25a31e4f6cb647b4af746ccb4c57f8b7" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: false,
-            notes: ""
+            notes: "One-time setup. Install the text pack, fonts and LUTs so the caption and grading lessons work. Do this before you start editing.\n- You should have three folders: ConversionLuts, CreativeLuts, TextEffectsPack\n- Text pack: open TextEffectsPack, double-click MotionTextProV1DR18, it lands in the Master Bin on the Edit page as MotionTextPro (Hook Design, Text Design)\n- Install every font in the pack, all of them, or the templates break. Mac: open each font folder and install. Windows: same idea\n- Remove unwanted shine: right-click a shiny text element, Open in Fusion, find the Ellipses setting and turn it off, repeat for any others\n- LUTs: open the LUTs tab, right-click the LUTs label, Reveal in Finder/Folder\n- Tidy first: make an 'unused' folder and move LUTs you don't use into it\n- Drop ConversionLuts and CreativeLuts into the LUT directory\n- Quit Resolve fully (Cmd+Q, no need to save) and reopen, or the new LUTs won't show up"
           },
-          {
-            id: "free-vs-studio",
-            title: "Resolve Free vs Studio",
-            embed: ``,
-            studioOnly: false,
-            notes: ""
-          }
-        ]
-      },
-
-      {
-        id: "setup",
-        title: "Setup and project organisation",
-        lessons: [
           {
             id: "project-settings",
             title: "Project settings and timeline setup",
-            embed: ``,
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/fef3e078a76441cc955a1dff747cf2f1" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: false,
-            notes: ""
-          },
-          {
-            id: "importing-media",
-            title: "Importing and organising media",
-            embed: ``,
-            studioOnly: false,
-            notes: ""
-          },
-          {
-            id: "proxy-media",
-            title: "Proxy and optimised media",
-            embed: ``,
-            studioOnly: true,
-            notes: ""
+            notes: "Set the project up correctly before any editing starts.\n- New Project: name it clearly (client or project name)\n- Know the five pages you'll live in: Media, Edit, Fusion, Color, Deliver\n- Open Project Settings (cog, bottom right) before importing\n- Set frame rate, timeline resolution and output resolution to match the platform\n- Landscape (1920x1080 or 4K) vs vertical for reels, pick before importing\n- Color management: set project to Rec.709 and output to Rec.709A so it matches phone playback\n- Import on the Media page: add a location, browse the drive, drag clips into the Media Pool\n- Drag the clip to the start of the Edit timeline, press Z to fit it to the viewer"
           }
         ]
       },
 
+      /* ====================================================================
+         2. EDITING
+         ==================================================================== */
       {
-        id: "the-edit",
-        title: "The edit",
+        id: "editing",
+        title: "Editing",
         lessons: [
           {
-            id: "cut-vs-edit",
-            title: "Cut page vs edit page",
-            embed: ``,
+            id: "basic-edit",
+            title: "Cutting a talking-head clip",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/8d672d4338104c72a03ae095d89d0fa9" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: false,
-            notes: ""
+            notes: "Trim a talking or Q&A clip into a tight, watchable social edit. Remove silence, filler and dead air, keep audio and video in sync.\n- Drop the raw clip on the timeline, confirm it's the right source\n- Zoom in (Cmd/Ctrl +) until you can read the waveform, use silence to find your cuts\n- Trim the start so it opens on the first spoken line, no lead-in\n- Close gaps with Backspace, or Delete Gaps from the Edit menu for multiple at once\n- Keep audio and video linked for talking heads, unlink only when you need them separate\n- Cut with the razor, or hold Alt and click with the pointer tool for speed\n- Select the dead section, Backspace, close the gap\n- Play it back start to finish, make sure it moves fast with no awkward pauses\n- Don't over-cut so it sounds unnatural, check the first and last frames are clean"
           },
           {
-            id: "assembly-pacing",
-            title: "Assembly and pacing",
-            embed: ``,
+            id: "transform-crop",
+            title: "Crop, zoom, reposition and rotate",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/0fb9b64cfc464db2b48add0111a233f4" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: false,
-            notes: ""
+            notes: "Reframe a clip: zoom, move, rotate, flip and crop. Two tools, Transform for broad moves, Transformer for precision.\n- Select the clip, open the Inspector (top right), find the Transform section\n- Transform: drag Zoom to push in or out, X moves left/right, Y moves up/down, Rotation to straighten, flip controls for horizontal/vertical\n- Crop: open the crop dropdown, pick the side (left, right, top, bottom) and trim what you want gone\n- Transformer tool (bottom-left tool selector, the four-dots-in-a-rectangle icon): gives you on-screen handles to stretch, move, rotate and zoom by hand\n- Use Transform for quick general framing, switch to Transformer when exact placement matters\n- Small Transformer moves shift the framing a lot, go slow. Recheck alignment after a flip or rotate. Check the correct clip is selected before you touch anything"
           },
           {
-            id: "j-and-l-cuts",
-            title: "J and L cuts and tightening",
-            embed: ``,
+            id: "broll",
+            title: "Adding B-roll over talking clips",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/ff56ae2b8f7148e580bccbc141b552d6" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: false,
-            notes: ""
+            notes: "Use B-roll to support what's being said and to hide jump cuts, mistakes and awkward transitions, while keeping the original audio clean.\n- A-roll is the person talking, B-roll is the supporting footage you lay above it\n- Add B-roll when the speaker describes something you can show: an action, a place, a product, a process\n- After tightening a talking clip you'll have jump cuts, cover them with B-roll so the edit feels smooth\n- Start the B-roll on the line that introduces the topic, run it long enough to cover the cut\n- Put B-roll on the track above the main footage\n- Kill the B-roll's own audio unless you actually want it, unlink and delete it so it doesn't fight the dialogue\n- Keep layering as the topics change (flossing shot on the flossing line, brushing shot on the brushing line)\n- Don't overuse it, if a clip already plays clean, leave it and move on"
           }
         ]
       },
 
+      /* ====================================================================
+         3. SOUND AND AUDIO
+         ==================================================================== */
       {
-        id: "b-roll",
-        title: "B-roll",
+        id: "audio",
+        title: "Sound and audio",
         lessons: [
           {
-            id: "sourcing-layering",
-            title: "Sourcing and layering B-roll",
-            embed: ``,
-            studioOnly: false,
-            notes: ""
-          },
-          {
-            id: "speed-ramps",
-            title: "Speed ramps and the B-roll look",
-            embed: ``,
+            id: "audio-clean-balance",
+            title: "Cleaning, balancing and adding audio",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/0409a11ae08f467eba3da5be975a5750" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: true,
-            notes: ""
+            notes: "Clean the voice, balance levels, and add music and effects so the audio sounds professional. AI Voice Isolation is Studio only.\n- Listen to the raw camera audio first so you know what needs fixing: low volume, noise, uneven levels\n- Zoom the waveform, aim for a balanced middle range, not peaks slamming top to bottom\n- Balance levels fast: copy a good clip (Cmd/Ctrl+C), select the rest, Opt/Alt+V to paste attributes, choose All Audio Attributes or Volume and Plugins\n- AI Voice Isolation for noise: turn it on, start at default then back it off until the voice sounds natural (around 30 percent is a good start)\n- Copy that cleaned setting onto the other clips the same way (paste Plugins, Volume, EQ)\n- Source music and SFX from Pixabay (free, non-copyright), or pull trending audio and keep an organised folder\n- Drop a riser at the end of the hook, line its peak up with the cut\n- Keep music and SFX under the dialogue, drag the clip volume down or set it in the Inspector\n- Add a mono track when you need to layer (right-click the track area, Add Track, Mono)\n- Trim trending audio to just the part you want and line it up with the pacing\n- Pull fade handles at the top of the clip for smooth starts\n- Dialogue is always the focus, don't let anything bury it"
           }
         ]
       },
 
+      /* ====================================================================
+         4. TEXT AND CAPTIONS
+         ==================================================================== */
       {
-        id: "text-captions",
+        id: "text",
         title: "Text and captions",
         lessons: [
           {
-            id: "motion-text-pro",
-            title: "Motion Text Pro setup",
-            embed: ``,
-            studioOnly: false,
-            notes: ""
-          },
-          {
-            id: "caption-style",
-            title: "Coolvetica and our caption style",
-            embed: ``,
-            studioOnly: false,
-            notes: ""
-          },
-          {
-            id: "auto-captions",
-            title: "AI auto-captions",
-            embed: ``,
+            id: "text-captions",
+            title: "Hook text, brand styling and auto-captions",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/236276d2d6ac4da7b675c27f7928261a" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: true,
-            notes: ""
+            notes: "Flashy motion text on the hook, clean auto-captions for the rest. Auto-captions need Studio, there's a manual fallback at the end for free users.\n- Use text on most short-form, go minimal on luxury or long-form\n- Motion Text Pro: switch the timeline dropdown to the text options, pick Text Design (simple) or Text Design Template (flashy hook)\n- Match the template to your hook's word count, paste it at the start of the timeline\n- Edit the words on the right panel, trim extra layers, fade the hook out instead of hard cutting\n- Brand colour: if the normal panel won't change it, right-click the clip, Open Fusion Page, select the colour node and adjust, bump saturation if needed\n- Fix timing in Fusion: Tools > Modifiers > Timing to delay or extend so the word lands with the audio, Position X/Y to recentre\n- Add a second emphasis word (e.g. \"flossing\") with another template, adjust font, size, tracking, fade out\n- Auto-captions: Timeline > AI Tools > Create Subtitles from Audio, set a low character count (around 6 per line) for one-word captions\n- Delete captions that clash with the hook text, style in Fusion with a light drop shadow for readability\n- Apply the Coolvetica preset, edit the track as a whole, position with X/Y, scrub through and fix any caption that ends before the speaker does\n- No Studio: Effects > Titles > Text+ as a manual fallback, slower, use only when you have to"
           }
         ]
       },
 
+      /* ====================================================================
+         5. COLOUR GRADING
+         ==================================================================== */
       {
         id: "colour",
         title: "Colour grading",
         lessons: [
           {
-            id: "powergrade-explained",
-            title: "The 12-node PowerGrade explained",
-            embed: ``,
+            id: "colour-grade",
+            title: "The 12-node PowerGrade",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/bf51e71c20d049688357e68dce027fda" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: true,
-            notes: ""
+            notes: "Build the 12-node grade once, save it as a PowerGrade, reuse it on every clip. Uses the LUTs from the install lesson.\n- Colour page: if it's empty, enable Clips, LUTs and FX up top so you see the node area and thumbnails\n- Select the first node, press Opt/Alt+S until you have 12 nodes, right-click > Clean Up Node Graph\n- Label them in order: Exposure, Curves, Temperature, Saturation, Details, Glow, Halation, Mask 1, Mask 2, FX, Convert, Creative\n- Convert node: drag a conversion LUT on to turn the grey log footage into a usable base, pick the one with the best exposure\n- Creative node: set Key Output to 0.25 as default. Subtle LUT, nudge to 0.3. Strong LUT, pull it down. Toggle it on and off to sanity check\n- Save it: right-click the viewer > Grab Still, open the Gallery, drag the still into the PowerGrade folder (not just Stills, or it won't work as a preset)\n- Reuse: clear the grade on a new clip and drag the saved PowerGrade onto it\n- Don't over-grade, you want it natural. Always adjust Key Output per LUT rather than assuming one setting fits all"
           },
           {
-            id: "applying-grade",
-            title: "Applying and balancing the grade",
-            embed: ``,
+            id: "exposure-contrast",
+            title: "Exposure and contrast with scopes",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/0e4ec8481bed47d5ad6757f36f618ab4" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: true,
-            notes: ""
+            notes: "Once the base grade's on, read the waveform and correct exposure and contrast per clip. Small moves, always check the scope.\n- Open the scopes (wave icon, right side), select Waveform. It shows brightness top to bottom, use it as your reference for every change\n- Work in Primary Colours wheels, broad first then refine\n- Offset: overall exposure, up to brighten, down to darken. First major move\n- Gain: the bright end / highlights\n- Gamma: midtones, including skin, keep it subtle\n- Lift: shadows, raise to recover detail, lower to deepen, watch you don't crush the blacks\n- Highlights and Shadows controls: targeted fixes that keep contrast, use these before yanking the whole exposure\n- Log controls: finer highlight/shadow shaping on a narrower range, tiny moves\n- Curves for contrast: left is dark, right is bright, middle is mids. A subtle S-curve adds cinematic contrast. Place the shadow and highlight points where the tones actually start and end, not way outside the range\n- Or just use the Contrast (Cont.) control in Primary for a quick global change\n- Incremental changes, not big jumps. Don't over-darken into crushed shadows"
           },
           {
-            id: "tweaking-per-shot",
-            title: "Tweaking per shot",
-            embed: ``,
+            id: "colour-balance",
+            title: "Temperature, tint and saturation",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/f19dc8a4ad394aebaef350f029258999" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: true,
-            notes: ""
+            notes: "After exposure, balance the colour: temperature, tint, saturation and skin. Small moves, judge by eye and by scope.\n- Temperature and saturation work together, check the image first for a colour cast, dullness or off skin\n- Temperature in Primary Colours: up is warmer, down is cooler. Warmth adds life and helps skin and brand colours\n- Switch the scope from Waveform to Vectorscope to see where the colour sits and avoid overcorrecting\n- Tint: push toward magenta if skin looks green or yellow-green, drop temperature if it's too yellow\n- Toggle the node (click its number) to check each change actually improves the shot\n- Saturation: raise the main control gradually, stop before it looks fake\n- Skin section: bump skin saturation slightly if it's gone pale, nudge hue if the tone's off\n- Targeted fixes with the qualifier curves: Hue vs Hue (shift one colour), Hue vs Sat (saturate one colour), Hue vs Lum (brighten/darken one colour). Only when a specific colour needs it\n- Work order: global balance first, then skin, then individual colours. Don't over-saturate, skin goes unnatural first"
+          },
+          {
+            id: "glow-halation",
+            title: "Detail reduction, glow and halation",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/ed7e4ebc1e2f443e82b29dea5454479d" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
+            studioOnly: true,
+            notes: "Soften sharp footage and add a dreamy cinematic bloom. This is the Details, Glow and Halation nodes from your PowerGrade. Order: detail first, then glow, then halation.\n- Detail: Primary Colours wheels, find Mid/Detail, lower it to take off harsh sharpness. Start around 10 to 20 (roughly 17.5), check it's softer without going mushy\n- Glow: Effects column, search Glow, drag it on. Lower threshold means more of the image glows, raise it to limit glow to the brightest spots. Set it so only strong highlights bloom (around 0.75). Toggle on and off to check it's subtle\n- Halation: search Halation, apply it. Raise the threshold so only the brightest areas and skin are just touched. You want a subtle red/orange halo around light sources, not a red cast\n- If skin goes too red: back to colour controls, drop red saturation slightly, recheck until skin's normal but the highlights keep the effect\n- Don't drop thresholds too far or the whole image glows. Don't overdo halation or skin looks artificial. Compare before and after every time"
+          },
+          {
+            id: "masks-qualifiers",
+            title: "Masks and qualifiers for local fixes",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/d4c2e36267124affba3fa189e8d442f5" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
+            studioOnly: true,
+            notes: "Isolate part of the image so an adjustment only hits where you want it. This is the Mask 1 and Mask 2 nodes from your PowerGrade, do it after the global look is set.\n- Open the Masks section (circular icon). Pick the shape: square for boxes, circle for round areas, line for narrow strips, polygon to trace a subject, gradient for a fade\n- Drop a mask on the target area (e.g. isolate the back teeth to lift saturation without touching the lips), position it to exclude nearby areas\n- Adjust inside the mask (saturation etc), check only the target moves\n- Not specific enough? Add a qualifier: droplet tool, click the exact colour or tone you want\n- Shift+H shows what's selected. Confirm only the right area is picked. Keep the mask as a boundary so the qualifier only searches inside it\n- Shift+H again to exit, then adjust. Small moves\n- Skin: polygon mask the subject first (or skip if nothing else is distracting), click the skin, Shift+H, tighten the range until it's mostly skin, then adjust warmth, redness, saturation\n- Reset arrow to start a selection over\n- Gradient mask for uneven light (strong window light): place it across the bright side, drop exposure to pull it back, or lift if it's too dark. Match the fade direction to the lighting\n- Workflow every time: mask first, qualify second, Shift+H to check, then adjust. Don't over-saturate skin"
+          },
+          {
+            id: "grade-finish-batch",
+            title: "Final touches and batch-applying the grade",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/8b96ba4e77434d2d86f39f6b45f0a56b" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
+            studioOnly: true,
+            notes: "The finishing layer: creative effects, the creative LUT, then copy the grade across every matching clip so you're not regrading from scratch.\n- FX node (Effects section, Studio): add subtle finishers after the correction is done\n- Blur/Radius to soften the edges and pull focus to the subject, keep the face sharp, use it sparingly\n- Film Grain for texture and a vintage feel, pick the type that fits, keep it subtle (shows more on a big screen than in a compressed preview)\n- Camera Shake and others if they suit the piece, don't overdo it\n- Creative LUT (Creative node): the stylistic layer on top of the conversion LUT. Pick from Retro, Motion Picture, Cinematic. Pull the strength back if it's too heavy\n- Keep conversion and creative LUTs in their own lanes, don't mix them up\n- Copy to one clip: click the node, Cmd/Ctrl+C, select the target, Cmd/Ctrl+V\n- Batch the whole sequence: copy the graded clip, highlight all the matching clips, Opt/Alt+V, choose Color Correction only so you don't drag across unrelated settings\n- Review the lot at the end, make sure the look is consistent clip to clip"
           }
         ]
       },
 
+      /* ====================================================================
+         6. EFFECTS, ANIMATION AND TRANSITIONS
+         ==================================================================== */
       {
-        id: "audio",
-        title: "Audio",
+        id: "effects",
+        title: "Effects, animation and transitions",
         lessons: [
           {
-            id: "levels-music-ducking",
-            title: "Levels, music and ducking",
-            embed: ``,
+            id: "keyframes",
+            title: "Animating with keyframes",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/78cafca114274be294f362de311e7775" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: false,
-            notes: ""
+            notes: "Keyframes animate a property over time: zoom, position, opacity, even the grade. A keyframe pins a value at a moment, two different values across two keyframes makes the movement.\n- Set a starting keyframe to lock the value at that point in time\n- Move further along the clip, add a second keyframe, change the value. Resolve animates between the two\n- Play it back, if it's too fast, too slow or starts in the wrong spot, move the keyframes or change the values\n- Position: keyframe a start and end spot to slide a clip across the frame\n- Opacity: keyframe high to low (or low to high) for a fade in or out\n- Works on any numeric value, including colour grading, keyframe where the look should shift and grade each section\n- Place them at the right time or the effect starts early/late. Don't pile on keyframes without a reason, it gets messy. Preview after every change"
           },
           {
-            id: "voice-cleanup",
-            title: "Voice cleanup and sweetening",
-            embed: ``,
-            studioOnly: true,
-            notes: ""
+            id: "fusion-zoom-intro",
+            title: "Zoom-in intro with motion blur and whoosh",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/fa2de0a094dc4e68ad31129ef97ae311" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
+            studioOnly: false,
+            notes: "Build a punchy zoom-in intro in Fusion: animated zoom, eased curves, motion blur and a whoosh to sell the motion.\n- Open the clip in Fusion, clear any test effects so you're building clean\n- Add a Transform node: Shift+Spacebar, search Transform, Enter\n- Frame 0: in the Transform Inspector set Size up to about 2.5x for a strong zoom-in, click the keyframe icon to lock it\n- Frame 15-16: add another Size keyframe back at 1.0 so it returns to normal. That's the basic zoom-out\n- Smooth it: select the Transform node, open the Spline tab (Cmd+scroll to zoom the view), highlight the curve, right-click > Ease > In-Out Cubic so it's not stiff and linear\n- Fine-tune: drag the control handle left to extend the ease until it feels quick but smooth\n- Motion blur: Shift+Spacebar, add a Blur node. Keyframe Blur Size high (around 100) at the start, then back to 0 about 2 frames before the zoom ends, so it sharpens up\n- Match the blur curve to the zoom: select the Blur curve in the spline, same Ease > In-Out Cubic, line the timing up\n- Whoosh: add a mono audio track, drop a whoosh at the start of the zoom, play it back and pull the volume down so it supports the move without shouting\n- Don't leave the zoom linear, don't overdo the blur, keep the blur and zoom timing in sync. Save this as a reusable setup if you'll use it again"
+          },
+          {
+            id: "flash-transition",
+            title: "Flash transition between clips",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/9b434593eec640b3bdc45c05e1f418da" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
+            studioOnly: false,
+            notes: "A subtle flash to soften a hard cut between two clips. Adjustment clip, Screen blend, a touch of exposure and a synced click.\n- Find the cut point, zoom right in so you can work on exact frames\n- Effects tab, drag an Adjustment Clip onto the track above the cut, sit it over the transition\n- Trim it to 6 frames total, roughly 3 before the cut and 3 after, razor off the excess\n- Select it, Inspector > Composite, set the blend mode to Screen. That's the base flash\n- Drag the white fade handles at the top into a triangle so it fades in and out instead of popping\n- Want it brighter? Colour tab, select the adjustment clip, lift Exposure. Noticeable but not distracting\n- Add a mouse-click SFX under the flash, line it up with the middle of the flash, nudge it earlier/later until the hit lands, pull the volume down\n- Keep it short (6 frames), don't blow the exposure out, don't let the click beat the dialogue. If snapping fights you, turn it off for fine placement. Preview in context before you move on"
           }
         ]
       },
 
+      /* ====================================================================
+         7. EXPORT
+         ==================================================================== */
       {
-        id: "fusion",
-        title: "Fusion",
+        id: "export",
+        title: "Export",
         lessons: [
           {
-            id: "fusion-basics",
-            title: "Fusion basics for editors",
-            embed: ``,
+            id: "export-social",
+            title: "Exporting for web and social",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/963d7b4968f9474e867f5b5ec30fe074" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: false,
-            notes: ""
+            notes: "Export the finished video with burned-in captions at the right settings for social. On the Deliver page.\n- Name the export and pick a folder you'll find again (e.g. Downloads)\n- Single Clip for one final file. Individual Clips only if you actually need each clip separate\n- Check resolution and fps match your project\n- Format: QuickTime, codec H.265, leave the rest on Auto, make sure both export checkboxes are on\n- Bitrate is the key call: Automatic if you'll re-edit it later and want max quality. Restrict to 15,000 kbps for direct upload to social. The restricted rate keeps the file small so Instagram/Meta don't crush it into a blurry mess. Don't upload a huge-bitrate file straight to a platform\n- Captions: turn on Export Subtitles, set to Burn into Video so they're baked in, not a separate file\n- Add to render queue, Render, let it finish\n- Right-click the job, Reveal in Finder, play it back and confirm the captions are in the video"
           },
           {
-            id: "animated-titles",
-            title: "Animated titles and graphics",
-            embed: ``,
+            id: "fix-caption-export",
+            title: "Fixing the Fusion caption export error",
+            embed: `<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://www.loom.com/embed/70e1ac881398454e81c161a7723a8a3f" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>`,
             studioOnly: false,
-            notes: ""
+            notes: "If export fails with a 'no frame available' error, a caption's Fusion effect is the cause. Here's the fix.\n- The error shows near the last or second-to-last frame and blocks the export. Treat it as a Fusion text effect issue, not a general export fault\n- Right-click the offending caption/text effect, open New Fusion Page\n- Click the diamond keyframes icon (top right) to show the keyframe bars\n- Find the word segment whose bar isn't extended far enough to cover its duration\n- Drag the end of that bar all the way out until the arrow indicator appears, repeat for any other short segments\n- Back to the timeline, confirm the arrow's gone, then re-export\n- Check the last and second-to-last captions first, that's usually where it is. If there are several captions, inspect them one by one so you don't miss the faulty one"
           }
         ]
       },
 
+      /* ====================================================================
+         8. FULL EDIT EXAMPLES
+         Worked, end-to-end edits by format. Add the walkthrough video into the
+         embed, copy a block for each new format you record (product,
+         testimonial, event, etc).
+         ==================================================================== */
       {
-        id: "export-delivery",
-        title: "Export and delivery",
+        id: "examples",
+        title: "Full edit examples",
         lessons: [
           {
-            id: "render-social",
-            title: "Render settings for social",
+            id: "example-talking-head",
+            title: "Full talking-head edit",
             embed: ``,
             studioOnly: false,
-            notes: ""
+            notes: "Placeholder. A full end-to-end edit of a talking-head video using everything in this course, from import to export. Add the walkthrough video here when you record it."
           },
           {
-            id: "frameio-handoff",
-            title: "Frame.io review and client handoff",
+            id: "example-real-estate",
+            title: "Full real estate edit",
             embed: ``,
             studioOnly: false,
-            notes: ""
+            notes: "Placeholder. A full end-to-end edit of a real estate video. Add the walkthrough here when you record it. Copy this block for other formats (product, testimonial, event)."
           }
         ]
       }
