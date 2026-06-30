@@ -223,29 +223,6 @@ body {
 .ph--7 { background: linear-gradient(150deg, #0a423e, #34A0C9); }
 .ph--8 { background: linear-gradient(150deg, #7BC4A4, #E8D9B5); }
 
-/* --------------------------- VIDEOS ----------------------------- */
-.videos {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 28px;
-}
-.video-frame {
-  position: relative;
-  width: 100%;
-  padding-top: 56.25%; /* 16:9 */
-  border-radius: var(--radius);
-  overflow: hidden;
-  background: #000;
-  box-shadow: 0 14px 30px -18px rgba(0,0,0,.6);
-}
-.video-frame iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%; height: 100%;
-  border: 0;
-}
-.caption { margin: 12px 2px 0; font-size: .9rem; color: #5a6b66; }
-
 /* ----------------------- SOCIAL REELS --------------------------- */
 .reel-grid {
   display: grid;

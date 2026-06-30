@@ -9,8 +9,7 @@ brand. No build step, no frameworks — just open `index.html`.
 - **Essence** — vibe statement and mood keywords
 - **Colour palette** — editable hex swatches
 - **Visual texture** — a masonry photo grid (self-hosted images)
-- **Motion & mood** — embedded reference videos (YouTube / Vimeo)
-- **On Social** — live Instagram reel embeds (currently @h2coco)
+- **On Social** — Instagram reel thumbnails (currently @h2coco)
 - **Live from Pinterest** — an optional live board embed
 - **Typography** — font specimens
 
@@ -18,32 +17,24 @@ brand. No build step, no frameworks — just open `index.html`.
 
 | Content | Best method | Why |
 |---|---|---|
-| Photos / stills | **Self-host** in `/images` | Pixel-perfect grid, fast, full control |
-| Video | **Embed** (YouTube/Vimeo iframe) | Reliable, lightweight, always current |
+| Photos / stills | **Self-host** in `/images` | Full-image masonry, fast, full control |
 | Pinterest | **Embed** a live board/pin | Stays up to date automatically |
 | Instagram / TikTok | **Screenshot → self-host** | Their embeds are flaky (login walls) |
 
 ## How to add your real content
 
 ### 1. Photos
-Create an `images/` folder, drop your saved photos in, then in `index.html`
-replace a placeholder tile:
+Drop saved photos into `images/`, then add a tile inside `.grid` in
+`index.html`. The grid is a masonry column layout, so images display in full
+at their natural aspect ratio — no cropping:
 ```html
-<div class="tile tile--tall ph ph--1"><span>Beach &amp; coastline</span></div>
-```
-with:
-```html
-<figure class="tile tile--tall">
-  <img src="images/beach.jpg" alt="sunlit coastline" />
+<figure class="tile">
+  <img src="images/your-photo.jpg" alt="describe the vibe" loading="lazy" />
+  <figcaption>Short label</figcaption>
 </figure>
 ```
-Keep `tile--tall` / `tile--wide` to shape the layout.
 
-### 2. Video
-On YouTube: **Share → Embed → copy the iframe**, or just swap the video ID in
-`https://www.youtube.com/embed/VIDEO_ID`. Vimeo works the same way.
-
-### 3. Instagram reels
+### 2. Instagram reels
 Instagram blocks reel preview images for logged-out visitors, so live embeds
 show blank for many viewers. Instead we use **self-hosted thumbnails** that
 always display. To add a reel: save a cover frame to `/images`, then add a
@@ -56,7 +47,7 @@ card inside `.reel-grid`:
 </a>
 ```
 
-### 4. Pinterest
+### 3. Pinterest
 Replace the `href` in the `data-pin-do="embedBoard"` block with the brand's
 real board URL. The Pinterest script renders it automatically.
 
