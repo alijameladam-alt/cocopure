@@ -192,6 +192,22 @@ body {
   font-weight: 500;
   color: #5a6b66;
 }
+.pack-range {
+  margin: var(--gap) 0 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 14px 30px -20px rgba(0,0,0,.5);
+}
+.pack-range img { width: 100%; height: auto; display: block; }
+.pack-range figcaption {
+  padding: 14px 18px;
+  font-size: .9rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: #5a6b66;
+  background: #fff;
+  text-align: center;
+}
 .pack-note {
   margin: 26px auto 0;
   max-width: 680px;
