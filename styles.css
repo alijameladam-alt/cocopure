@@ -172,7 +172,86 @@ body {
 .swatch code { font-size: .78rem; opacity: .85; letter-spacing: .04em; }
 .swatch--light { color: var(--ink); border: 1px solid rgba(0,0,0,.06); }
 
-/* ---------------------------- GRID ------------------------------ */
+/* --------------------- THE INCUMBENTS --------------------------- */
+.kicker {
+  text-transform: uppercase;
+  letter-spacing: .22em;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--ocean);
+  margin: 0 0 6px;
+}
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+  align-items: start;
+}
+.market-card {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 12px 28px -22px rgba(0,0,0,.5);
+}
+.market-card__head {
+  padding: 20px 22px;
+  background: rgba(22,196,201,.12);   /* turquoise tint */
+}
+.market-card__head--alt { background: rgba(233,105,92,.12); } /* watermelon tint */
+.market-card__head h3 {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+.market-tag {
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: .68rem;
+  font-weight: 700;
+  color: var(--lagoon);
+}
+.market-tag--alt { color: #C0584C; }
+.market-owner {
+  margin: 0;
+  padding: 16px 22px;
+  font-style: italic;
+  font-size: .9rem;
+  color: #5a6b66;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+.market-specs {
+  margin: 0;
+  padding: 8px 22px 22px;
+}
+.market-specs dt {
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-size: .66rem;
+  font-weight: 700;
+  color: var(--ocean);
+  margin-top: 16px;
+}
+.market-specs dd {
+  margin: 3px 0 0;
+  font-size: .92rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.market-source {
+  margin: 24px 0 0;
+  font-size: .76rem;
+  font-style: italic;
+  color: #8a968f;
+  line-height: 1.5;
+}
+@media (max-width: 760px) {
+  .market-grid { grid-template-columns: 1fr; }
+}
+
 /* ----------------------- PACKAGING ------------------------------ */
 .pack-grid {
   display: grid;
