@@ -10,7 +10,7 @@ brand. No build step, no frameworks — just open `index.html`.
 - **Colour palette** — editable hex swatches
 - **Packaging direction** — minimal packaging concept + shelf comparison
 - **Visual texture** — a masonry photo grid (self-hosted images)
-- **On Social** — Instagram reel thumbnails (currently @h2coco)
+- **Social & media production** — reel thumbnails as a production-quality reference
 
 ## The hybrid approach (why it looks good *and* stays flexible)
 
