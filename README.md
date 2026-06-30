@@ -8,17 +8,15 @@ brand. No build step, no frameworks — just open `index.html`.
 - **Hero** — brand name + tagline
 - **Essence** — vibe statement and mood keywords
 - **Colour palette** — editable hex swatches
+- **Packaging direction** — minimal packaging concept + shelf comparison
 - **Visual texture** — a masonry photo grid (self-hosted images)
 - **On Social** — Instagram reel thumbnails (currently @h2coco)
-- **Live from Pinterest** — an optional live board embed
-- **Typography** — font specimens
 
 ## The hybrid approach (why it looks good *and* stays flexible)
 
 | Content | Best method | Why |
 |---|---|---|
 | Photos / stills | **Self-host** in `/images` | Full-image masonry, fast, full control |
-| Pinterest | **Embed** a live board/pin | Stays up to date automatically |
 | Instagram / TikTok | **Screenshot → self-host** | Their embeds are flaky (login walls) |
 
 ## How to add your real content
@@ -46,10 +44,6 @@ card inside `.reel-grid`:
   <span class="reel-cap">“Short caption from the reel.”</span>
 </a>
 ```
-
-### 3. Pinterest
-Replace the `href` in the `data-pin-do="embedBoard"` block with the brand's
-real board URL. The Pinterest script renders it automatically.
 
 ## Colours
 Edit the hex values in the `.swatch` blocks (`index.html`) and the `:root`
