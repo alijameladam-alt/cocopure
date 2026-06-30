@@ -129,31 +129,39 @@
     </section>
 
     <!-- ====================== INSTAGRAM REELS ====================
-         Live Instagram embeds. Instagram's embed.js (loaded at the
-         bottom of the page) renders the full card from just the
-         permalink — no need to paste the giant <blockquote> markup.
-         To add more: copy a reel/post URL and add another block with
-         data-instgrm-permalink set to it.
+         Self-hosted reel thumbnails. Instagram blocks reel preview
+         images from logged-out visitors, so embeds show blank for many
+         viewers. Instead each card uses a saved screenshot that always
+         displays and links straight to the reel.
+
+         To add a reel: save a cover frame to /images, then fill in the
+         href (reel URL), the <img src> (or leave the .reel-card--empty
+         placeholder), and a short caption.
     ============================================================== -->
     <section class="section">
       <h2 class="section__title">On Social — @h2coco</h2>
       <p class="section__sub">
-        Live reels from H2Coco. These stay current automatically and capture the
-        brand's tone, pacing, and energy in motion.
+        Reels from H2Coco — the brand's tone, pacing, and energy in motion.
+        Click any thumbnail to watch it on Instagram.
       </p>
-      <div class="social-grid">
-        <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/reel/DZ4QfORgZw9/" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:3px;box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15);margin:0;max-width:540px;min-width:326px;padding:0;width:100%;">
-          <a class="ig-fallback" href="https://www.instagram.com/reel/DZ4QfORgZw9/" target="_blank" rel="noopener">View Reel on Instagram</a>
-        </blockquote>
-        <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/reel/DaKSCdKDfCo/" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:3px;box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15);margin:0;max-width:540px;min-width:326px;padding:0;width:100%;">
-          <a class="ig-fallback" href="https://www.instagram.com/reel/DaKSCdKDfCo/" target="_blank" rel="noopener">View Reel on Instagram</a>
-        </blockquote>
-        <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/reel/DZUNi7clfGb/" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:3px;box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15);margin:0;max-width:540px;min-width:326px;padding:0;width:100%;">
-          <a class="ig-fallback" href="https://www.instagram.com/reel/DZUNi7clfGb/" target="_blank" rel="noopener">View Reel on Instagram</a>
-        </blockquote>
-        <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/reel/DX6FmjpjRkN/" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:3px;box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15);margin:0;max-width:540px;min-width:326px;padding:0;width:100%;">
-          <a class="ig-fallback" href="https://www.instagram.com/reel/DX6FmjpjRkN/" target="_blank" rel="noopener">View Reel on Instagram</a>
-        </blockquote>
+      <div class="reel-grid">
+        <a class="reel-card" href="https://www.instagram.com/reel/DZ4QfORgZw9/" target="_blank" rel="noopener">
+          <img src="images/reel-DZ4QfORgZw9.png" alt="H2Juice reel — office fridge vs beach bag" loading="lazy" />
+          <span class="reel-play" aria-hidden="true"></span>
+          <span class="reel-cap">“H2juice in the office fridge, H2juice in the beach bag.”</span>
+        </a>
+        <a class="reel-card reel-card--empty" href="https://www.instagram.com/reel/DaKSCdKDfCo/" target="_blank" rel="noopener">
+          <span class="reel-play" aria-hidden="true"></span>
+          <span class="reel-ph">Add thumbnail<br><small>reel 2</small></span>
+        </a>
+        <a class="reel-card reel-card--empty" href="https://www.instagram.com/reel/DZUNi7clfGb/" target="_blank" rel="noopener">
+          <span class="reel-play" aria-hidden="true"></span>
+          <span class="reel-ph">Add thumbnail<br><small>reel 3</small></span>
+        </a>
+        <a class="reel-card reel-card--empty" href="https://www.instagram.com/reel/DX6FmjpjRkN/" target="_blank" rel="noopener">
+          <span class="reel-play" aria-hidden="true"></span>
+          <span class="reel-ph">Add thumbnail<br><small>reel 4</small></span>
+        </a>
       </div>
     </section>
 
@@ -205,25 +213,9 @@
 
   <!-- Pinterest embed script (renders the data-pin-do block above) -->
   <script async defer src="https://assets.pinterest.com/js/pinit.js"></script>
-  <!-- Instagram embed script (renders the .instagram-media blocks above) -->
-  <script async src="https://www.instagram.com/embed.js"></script>
   <script>
     document.getElementById('date').textContent =
       new Date().toLocaleDateString('en-AU', { month: 'long', year: 'numeric' });
-
-    // Make sure Instagram processes the embeds once everything has loaded.
-    // (Belt-and-suspenders: embed.js auto-runs, but if it loaded before the
-    // blockquotes were parsed, this re-triggers it.)
-    function processInstagramEmbeds() {
-      if (window.instgrm && window.instgrm.Embeds) {
-        window.instgrm.Embeds.process();
-      }
-    }
-    window.addEventListener('load', function () {
-      processInstagramEmbeds();
-      // Retry shortly after, in case embed.js is still downloading on load.
-      setTimeout(processInstagramEmbeds, 1500);
-    });
   </script>
 </body>
 </html>
