@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coconut Water — Brand Mood Board</title>
+  <meta name="description" content="Visual direction & mood board for a premium coconut water brand." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============================ HERO ============================ -->
+  <header class="hero">
+    <div class="hero__inner">
+      <p class="eyebrow">Brand Mood Board · Visual Direction</p>
+      <h1 class="hero__title">Coconut&nbsp;Water</h1>
+      <p class="hero__tagline">Pure hydration, straight from the source. <br />Fresh, clean, and effortlessly tropical.</p>
+      <p class="hero__meta">Prepared for client review · <span id="date"></span></p>
+    </div>
+    <div class="hero__scroll">scroll ↓</div>
+  </header>
+
+  <main>
+
+    <!-- ====================== BRAND ESSENCE ====================== -->
+    <section class="section section--narrow">
+      <h2 class="section__title">The Essence</h2>
+      <p class="lede">
+        A beverage that tastes like a holiday. We want the brand to feel
+        <em>light, natural, and honest</em> — sunlit beaches, dewy fruit,
+        and the crisp moment of refreshment. Premium without being fussy.
+      </p>
+      <ul class="keywords">
+        <li>fresh</li>
+        <li>tropical</li>
+        <li>natural</li>
+        <li>hydrating</li>
+        <li>sun-kissed</li>
+        <li>clean</li>
+        <li>effortless</li>
+        <li>coastal</li>
+      </ul>
+    </section>
+
+    <!-- ====================== COLOR PALETTE ====================== -->
+    <section class="section">
+      <h2 class="section__title">Colour Palette</h2>
+      <p class="section__sub">The visual backbone — swap any hex for the brand's real colours.</p>
+      <div class="palette">
+        <div class="swatch" style="--c:#0E5D57"><span>Deep Lagoon</span><code>#0E5D57</code></div>
+        <div class="swatch" style="--c:#7BC4A4"><span>Fresh Green</span><code>#7BC4A4</code></div>
+        <div class="swatch" style="--c:#34A0C9"><span>Ocean</span><code>#34A0C9</code></div>
+        <div class="swatch swatch--light" style="--c:#F4EFE6"><span>Coconut Cream</span><code>#F4EFE6</code></div>
+        <div class="swatch swatch--light" style="--c:#E8D9B5"><span>Warm Sand</span><code>#E8D9B5</code></div>
+        <div class="swatch" style="--c:#F2A65A"><span>Sunlight</span><code>#F2A65A</code></div>
+      </div>
+    </section>
+
+    <!-- ====================== PHOTO GRID =========================
+         APPROACH 1 — SELF-HOSTED IMAGES (recommended for stills).
+         Save the photos you love into an /images folder and replace
+         each placeholder <div class="tile ..."> with:
+
+           <figure class="tile tile--tall">
+             <img src="images/your-photo.jpg" alt="describe the vibe" />
+           </figure>
+
+         Keep the tile--tall / tile--wide classes to control the
+         masonry layout. This gives you a pixel-perfect, fast grid.
+    ============================================================== -->
+    <section class="section">
+      <h2 class="section__title">Visual Texture</h2>
+      <p class="section__sub">
+        Self-hosted photo grid. Each tile below is a drop-in slot — replace with
+        saved Pinterest / social stills for full layout control.
+      </p>
+      <div class="grid">
+        <div class="tile tile--tall ph ph--1"><span>Beach &amp; coastline</span></div>
+        <div class="tile ph ph--2"><span>Coconut close-up</span></div>
+        <div class="tile ph ph--3"><span>Product / bottle</span></div>
+        <div class="tile tile--wide ph ph--4"><span>Lifestyle · people drinking</span></div>
+        <div class="tile ph ph--5"><span>Fresh fruit / splash</span></div>
+        <div class="tile tile--tall ph ph--6"><span>Tropical foliage</span></div>
+        <div class="tile ph ph--7"><span>Texture / water droplets</span></div>
+        <div class="tile ph ph--8"><span>Flat-lay / packaging</span></div>
+      </div>
+    </section>
+
+    <!-- ====================== VIDEO EMBEDS =======================
+         APPROACH 2 — EMBED VIDEO via iframe (recommended for motion).
+         YouTube & Vimeo embed reliably. To use a real video:
+           1. On YouTube click Share → Embed → copy the <iframe> code, OR
+           2. Just swap the youtube.com/embed/VIDEO_ID below.
+         The .video-frame wrapper keeps a 16:9 ratio responsive.
+    ============================================================== -->
+    <section class="section">
+      <h2 class="section__title">Motion &amp; Mood</h2>
+      <p class="section__sub">
+        Embedded video — lightweight and always up to date. Replace the demo IDs
+        with the client's reference reels.
+      </p>
+      <div class="videos">
+        <div class="video-card">
+          <div class="video-frame">
+            <iframe
+              src="https://www.youtube.com/embed/aqz-KE-bpKQ"
+              title="Reference video 1"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen></iframe>
+          </div>
+          <p class="caption">Reference reel — pacing &amp; light</p>
+        </div>
+        <div class="video-card">
+          <div class="video-frame">
+            <iframe
+              src="https://player.vimeo.com/video/76979871"
+              title="Reference video 2"
+              loading="lazy"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowfullscreen></iframe>
+          </div>
+          <p class="caption">Texture / b-roll inspiration</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================== PINTEREST / SOCIAL =================
+         APPROACH 3 — LIVE SOCIAL EMBEDS.
+         Pinterest: replace the data-pin-href below with a board or pin URL.
+         The Pinterest widget script at the bottom of the page renders it.
+         Instagram/TikTok embeds are flakier (login walls) — for a polished
+         pitch, screenshot those stills and add them to the photo grid above.
+    ============================================================== -->
+    <section class="section section--narrow">
+      <h2 class="section__title">Live From Pinterest</h2>
+      <p class="section__sub">
+        Embed a live board or pin so it stays current. Paste your board URL into
+        <code>data-pin-href</code>.
+      </p>
+      <div class="pin-wrap">
+        <a data-pin-do="embedBoard"
+           data-pin-board-width="100%"
+           data-pin-scale-height="320"
+           data-pin-scale-width="115"
+           href="https://www.pinterest.com/pinterest/coconut/">
+        </a>
+        <p class="hint">↑ Replace the href with the brand's real Pinterest board URL.</p>
+      </div>
+    </section>
+
+    <!-- ====================== TYPOGRAPHY ========================= -->
+    <section class="section section--narrow">
+      <h2 class="section__title">Typography</h2>
+      <div class="type-specimen">
+        <p class="type-display">Aa Bb Cc</p>
+        <p class="type-name">Fraunces — display / headlines</p>
+        <p class="type-sample">Warm, organic serif. Feels premium and editorial.</p>
+      </div>
+      <div class="type-specimen">
+        <p class="type-body-big">Aa Bb Cc</p>
+        <p class="type-name">Inter — body / UI</p>
+        <p class="type-sample">Clean and modern. Highly legible across all sizes.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>Coconut Water · Mood Board</p>
+    <p class="footer__note">A working concept — all imagery is placeholder until final assets are added.</p>
+  </footer>
+
+  <!-- Pinterest embed script (renders the data-pin-do block above) -->
+  <script async defer src="https://assets.pinterest.com/js/pinit.js"></script>
+  <script>
+    document.getElementById('date').textContent =
+      new Date().toLocaleDateString('en-AU', { month: 'long', year: 'numeric' });
+  </script>
+</body>
+</html>
