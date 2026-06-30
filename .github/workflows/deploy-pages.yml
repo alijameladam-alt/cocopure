@@ -3,7 +3,7 @@ name: Deploy mood board to GitHub Pages
 on:
   push:
     branches:
-      - claude/coconut-water-mood-board-lsvs9m
+      - main
   workflow_dispatch:
 
 permissions:
