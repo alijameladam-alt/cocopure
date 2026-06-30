@@ -44,11 +44,17 @@ On YouTube: **Share → Embed → copy the iframe**, or just swap the video ID i
 `https://www.youtube.com/embed/VIDEO_ID`. Vimeo works the same way.
 
 ### 3. Instagram reels
-Copy a reel/post URL and add a block inside `.social-grid`:
+Instagram blocks reel preview images for logged-out visitors, so live embeds
+show blank for many viewers. Instead we use **self-hosted thumbnails** that
+always display. To add a reel: save a cover frame to `/images`, then add a
+card inside `.reel-grid`:
 ```html
-<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/REEL_ID/" data-instgrm-version="14"></blockquote>
+<a class="reel-card" href="https://www.instagram.com/reel/REEL_ID/" target="_blank" rel="noopener">
+  <img src="images/reel-REEL_ID.webp" alt="describe it" loading="lazy" />
+  <span class="reel-play" aria-hidden="true"></span>
+  <span class="reel-cap">“Short caption from the reel.”</span>
+</a>
 ```
-Instagram's `embed.js` (already loaded) renders the full card automatically.
 
 ### 4. Pinterest
 Replace the `href` in the `data-pin-do="embedBoard"` block with the brand's
